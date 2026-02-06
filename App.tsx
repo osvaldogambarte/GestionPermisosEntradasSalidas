@@ -5,6 +5,7 @@ import Layout from './components/Layout';
 import PermitForm from './components/PermitForm';
 import Dashboard from './components/Dashboard';
 import HRPanel from './components/HRPanel';
+import ManagerPanel from './components/ManagerPanel';
 import { analyzeMotive } from './services/geminiService';
 
 // Mock DB Initial Data
@@ -13,6 +14,7 @@ const INITIAL_USERS: User[] = [
   { id: '2', name: 'Marta Gomez', email: 'marta@empresa.com', role: UserRole.MANAGER, sector: 'Producción' },
   { id: '3', name: 'Admin RRHH', email: 'rrhh@empresa.com', role: UserRole.HR, sector: 'RRHH' },
   { id: '4', name: 'Pedro Vigilante', email: 'porteria@empresa.com', role: UserRole.SECURITY, sector: 'Portería' },
+  { id: '105', name: 'Carlos Ruiz', email: 'carlos@empresa.com', role: UserRole.EMPLOYEE, sector: 'Mantenimiento' },
 ];
 
 const INITIAL_REQUESTS: PermitRequest[] = [
@@ -63,7 +65,7 @@ const App: React.FC = () => {
         setCurrentUser(user);
         setView('dashboard');
       } else {
-        alert('Credenciales inválidas. Intente con: juan@empresa.com, marta@empresa.com, rrhh@empresa.com o porteria@empresa.com');
+        alert('Credenciales inválidas. Intente con: juan@empresa.com, marta@empresa.com, rrhh@empresa.com, porteria@empresa.com o carlos@empresa.com');
       }
       setIsLoading(false);
     }, 1000);
@@ -134,6 +136,42 @@ const App: React.FC = () => {
     }));
   };
 
+  const renderDashboardByRole = () => {
+    if (!currentUser) return null;
+
+    switch (currentUser.role) {
+      case UserRole.HR:
+        return (
+          <HRPanel 
+            requests={requests} 
+            onApprove={handleApprove} 
+            onReject={handleReject} 
+          />
+        );
+      case UserRole.MANAGER:
+        return (
+          <ManagerPanel 
+            user={currentUser}
+            requests={requests} 
+            onApprove={handleApprove} 
+            onReject={handleReject} 
+          />
+        );
+      default:
+        return (
+          <Dashboard 
+            user={currentUser} 
+            requests={requests} 
+            onApprove={handleApprove}
+            onReject={handleReject}
+            onSecurityAction={handleSecurity}
+            onUploadProof={handleUploadProof}
+            onCreateRequest={() => setView('form')}
+          />
+        );
+    }
+  };
+
   if (view === 'login') {
     return (
       <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4">
@@ -197,7 +235,7 @@ const App: React.FC = () => {
                     onClick={() => setLoginForm({ email: u.email, password: '123' })}
                     className="text-[10px] bg-slate-700 hover:bg-slate-600 text-slate-300 px-2 py-1 rounded-md transition-colors"
                   >
-                    {u.role}
+                    {u.role === UserRole.EMPLOYEE ? u.name.split(' ')[0] : u.role}
                   </button>
                 ))}
              </div>
@@ -209,25 +247,7 @@ const App: React.FC = () => {
 
   return (
     <Layout user={currentUser} onLogout={() => { setCurrentUser(null); setView('login'); }}>
-      {view === 'dashboard' && currentUser && (
-        currentUser.role === UserRole.HR ? (
-          <HRPanel 
-            requests={requests} 
-            onApprove={handleApprove} 
-            onReject={handleReject} 
-          />
-        ) : (
-          <Dashboard 
-            user={currentUser} 
-            requests={requests} 
-            onApprove={handleApprove}
-            onReject={handleReject}
-            onSecurityAction={handleSecurity}
-            onUploadProof={handleUploadProof}
-            onCreateRequest={() => setView('form')}
-          />
-        )
-      )}
+      {view === 'dashboard' && renderDashboardByRole()}
       {view === 'form' && (
         <div className="space-y-6">
            <button 
