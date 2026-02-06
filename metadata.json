@@ -1,0 +1,7 @@
+{
+  "name": "Sistema de Gestión de Permisos de Salida",
+  "description": "Una aplicación web empresarial para digitalizar el flujo de aprobación de permisos de salida de empleados, desde la solicitud hasta la validación en portería.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
