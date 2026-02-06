@@ -6,6 +6,7 @@ import PermitForm from './components/PermitForm';
 import Dashboard from './components/Dashboard';
 import HRPanel from './components/HRPanel';
 import ManagerPanel from './components/ManagerPanel';
+import SecurityPanel from './components/SecurityPanel';
 import { analyzeMotive } from './services/geminiService';
 
 // Mock DB Initial Data
@@ -155,6 +156,13 @@ const App: React.FC = () => {
             requests={requests} 
             onApprove={handleApprove} 
             onReject={handleReject} 
+          />
+        );
+      case UserRole.SECURITY:
+        return (
+          <SecurityPanel 
+            requests={requests}
+            onSecurityAction={handleSecurity}
           />
         );
       default:
