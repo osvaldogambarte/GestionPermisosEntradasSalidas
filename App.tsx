@@ -235,9 +235,11 @@ const App: React.FC = () => {
           </form>
 
           <div className="mt-8 text-center bg-slate-800/50 p-4 rounded-2xl border border-slate-700/50">
-             <p className="text-xs text-slate-400 font-medium mb-2">Usuarios de prueba (simulando DB):</p>
+             <p className="text-xs text-slate-400 font-medium mb-2">Ayuda de acceso (Simulación):</p>
              <div className="flex flex-wrap justify-center gap-2">
-                {INITIAL_USERS.map(u => (
+                {INITIAL_USERS
+                  .filter(u => u.id !== '105') // Sacamos a Carlos de los botones de ayuda como solicitaste
+                  .map(u => (
                   <button 
                     key={u.id}
                     onClick={() => setLoginForm({ email: u.email, password: '123' })}
